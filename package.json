@@ -1,0 +1,90 @@
+{
+  "name": "typescript-npm-package-template",
+  "version": "0.0.0-development",
+  "description": "A template for creating npm packages using TypeScript and VSCode",
+  "main": "./lib/src/index.js",
+  "files": [
+    "lib/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf ./lib/",
+    "cm": "cz",
+    "lint": "eslint ./src/ --fix",
+    "prepare": "husky install",
+    "semantic-release": "semantic-release",
+    "typecheck": "tsc --noEmit",
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryansonshine/typescript-npm-package-template.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ryan Sonshine",
+    "email": "ryansonshine@users.noreply.github.com",
+    "url": "https://github.com/ryansonshine"
+  },
+  "engines": {
+    "node": ">=12.0"
+  },
+  "keywords": [
+    "boilerplate",
+    "template",
+    "typescript",
+    "vscode",
+    "husky",
+    "commitizen",
+    "semantic-release",
+    "codecov"
+  ],
+  "bugs": {
+    "url": "https://github.com/ryansonshine/typescript-npm-package-template/issues"
+  },
+  "homepage": "https://github.com/ryansonshine/typescript-npm-package-template#readme",
+  "dependencies": {
+    "@coinbarn/ergo-ts": "^0.3.0",
+    "ergo-lib-wasm-browser": "^0.16.1",
+    "lodash": "^4.17.21",
+    "mocha": "^10.0.0",
+    "superagent": "^7.1.6"
+  },
+  "devDependencies": {
+    "@ryansonshine/commitizen": "^4.2.8",
+    "@ryansonshine/cz-conventional-changelog": "^3.3.4",
+    "@types/chai": "^4.3.1",
+    "@types/lodash": "^4.14.182",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^12.20.11",
+    "@types/superagent": "^4.1.15",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "chai": "^4.3.6",
+    "ergo-lib-wasm-nodejs": "^0.16.1",
+    "eslint": "^7.25.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.2.1",
+    "semantic-release": "^19.0.2",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.2.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/@ryansonshine/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --cache-location .eslintcache --fix"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ]
+  }
+}

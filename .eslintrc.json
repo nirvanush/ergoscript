@@ -1,0 +1,70 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "plugin:prettier/recommended",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:import/typescript",
+    "plugin:import/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "prettier"],
+  "rules": {
+    "prefer-const": "error",
+    "no-debugger": "warn",
+    "@typescript-eslint/no-unused-vars": "off",
+    "import/no-unused-modules": "error",
+    "import/newline-after-import": "error",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "block-like", "next": "*" },
+      { "blankLine": "always", "prev": "*", "next": "block-like" }
+    ],
+    "import/named": "off",
+    "import/namespace": "off",
+    "import/order": "off",
+    "prettier/prettier": ["error", { "singleQuote": true, "printWidth": 100 }],
+    "no-use-before-define": "warn",
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "prefer-rest-params": "off",
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "extendDefaults": true,
+        "types": {
+          "{}": false
+        }
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".ts", ".tsx"],
+        "moduleDirectory": ["src", "node_modules"]
+      }
+    }
+  },
+  "ignorePatterns": [
+    "README.MD",
+    "*.svg",
+    "*.png",
+    "*.html",
+    "*.graphql",
+    "*.generated.ts*"
+  ]
+}

@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "preserve",
     "baseUrl": "src",
-    "incremental": true
+    "incremental": true,
+    "declaration": true
   },
   "include": ["src", "tests"],
   "exclude": ["node_modules"]

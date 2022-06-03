@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import buildScriptScope from '../src/ergoscriptMock';
-import { SigmaType, ExplorerBox, Box } from '../src/Box';
+import Box, { SigmaType, ExplorerBox } from '../src/Box';
 import explorerBox from './jsons/explorer-locked-box';
 import { Address, minBoxValue } from '@coinbarn/ergo-ts';
-import Transaction from '../src/Transaction';
+import Transaction from '../src';
 import { utxos } from './jsons/utxos';
 import { tokensFromWallet } from './jsons/loadTokensFromWallet.mock';
 

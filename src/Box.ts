@@ -100,7 +100,7 @@ export class Register {
   }
 }
 
-export class Box {
+export default class Box {
   boxJson: ExplorerBox;
   additionalRegisters: AdditionalRegisters;
   R4: Register;

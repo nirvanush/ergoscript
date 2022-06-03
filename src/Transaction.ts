@@ -1,4 +1,4 @@
-import { Asset, Box, RegisterInput } from './Box';
+import Box, { Asset, RegisterInput } from './Box';
 import { currentHeight, loadTokensFromWallet } from './helpers';
 import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';

@@ -8,6 +8,10 @@ export async function encodeLongTuple(a: number | string, b: number | string): P
   return wasmModule.SigmaRust.Constant.from_i64_str_array([a, b]).encode_to_base16();
 }
 
+export function test() {
+  return null;
+}
+
 export async function colTuple(
   a: ArrayBuffer | SharedArrayBuffer,
   b: ArrayBuffer | SharedArrayBuffer

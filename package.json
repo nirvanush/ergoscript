@@ -1,6 +1,6 @@
 {
   "name": "ergoscript.js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Ergo transaction builder optimized for ErgoScript development",
   "main": "./lib/src/index.js",
   "types": "./lib/src/index.d.ts",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://git@github.com/nirvanush/ergoscript.js.git"
+    "url": "https://github.com/nirvanush/ergoscript.js.git"
   },
   "license": "MIT",
   "author": {

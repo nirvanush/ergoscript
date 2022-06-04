@@ -2,14 +2,14 @@
   "name": "ergoscript.js",
   "version": "0.0.1",
   "description": "Ergo transaction builder optimized for ErgoScript development",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./lib/src/index.js",
+  "types": "lib/src/index.d.ts",
   "files": [
-    "dist/**/*"
+    "lib/**/*"
   ],
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf ./dist/",
+    "clean": "rm -rf ./lib/",
     "cm": "cz",
     "lint": "eslint ./src/ --fix",
     "prepare": "husky install",

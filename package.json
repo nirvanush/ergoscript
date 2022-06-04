@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://git@github.com:nirvanush/ergoscript.js.git"
+    "url": "git+https://git@github.com/nirvanush/ergoscript.js.git"
   },
   "license": "MIT",
   "author": {

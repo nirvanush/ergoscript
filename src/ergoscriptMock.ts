@@ -13,10 +13,7 @@ Object.defineProperty(String.prototype, 'replaceAll', {
 });
 
 function replacer(str: string): string {
-  const replaced = str
-    .replaceAll('val ', 'var ')
-    .replaceAll('Coll[Byte]', "'Coll[Byte]'")
-    .replaceAll(/(\d+)L/g, '$1');
+  const replaced = str.replaceAll('val ', 'var ').replaceAll(/(\d+)L/g, '$1');
 
   return replaced;
 }
@@ -25,6 +22,8 @@ function buildScriptScope(tx: Transaction): {
   execute: (script: string) => any;
 } {
   const Long = 'Long';
+  const Byte = 'Byte';
+
   const INPUTS = (i: number) => tx.inputs[i];
   INPUTS.size = tx.inputs.length;
 
@@ -44,6 +43,8 @@ function buildScriptScope(tx: Transaction): {
   function Coll() {
     return Array.from(arguments);
   }
+
+  Coll.Byte = 'Coll[Byte]';
 
   function allOf(arr: boolean[]) {
     return arr.every((element: boolean) => element === true);

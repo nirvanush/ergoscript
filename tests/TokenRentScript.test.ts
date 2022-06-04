@@ -17,8 +17,9 @@ const script = `
   val isRentalPeriodSame = OUTPUTS(0).R6[Long].get == INPUTS(0).R6[Long].get
   val isAmountOk = OUTPUTS(1).value == INPUTS(0).R5[Long].get
   val txSenderAddress = OUTPUTS(OUTPUTS.size - 2).propositionBytes
-  val isSendingFundsToSeller = OUTPUTS(1).propositionBytes == INPUTS(0).R4['Coll[Byte]'].get
-  val isSettingTheRenter = OUTPUTS(0).R7['Coll[Byte]'].isDefined && OUTPUTS(0).R7['Coll[Byte]'].get == txSenderAddress
+  debugger
+  val isSendingFundsToSeller = OUTPUTS(1).propositionBytes == INPUTS(0).R4[Coll[Byte]].get
+  val isSettingTheRenter = OUTPUTS(0).R7[Coll[Byte]].isDefined && OUTPUTS(0).R7[Coll[Byte]].get == txSenderAddress
 
   sigmaProp(allOf(Coll(
     isDefined,

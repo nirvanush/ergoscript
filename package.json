@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "Ergo transaction builder optimized for ErgoScript development",
   "main": "./lib/src/index.js",
-  "types": "lib/src/index.d.ts",
   "files": [
     "lib/**/*"
   ],
@@ -11,12 +10,12 @@
     "build": "tsc",
     "clean": "rm -rf ./lib/",
     "cm": "cz",
+    "coverage": "codecov",
     "lint": "eslint ./src/ --fix",
     "prepare": "husky install",
-    "prepublish": "tsc",
     "semantic-release": "semantic-release",
-    "typecheck": "tsc --noEmit",
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'"
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",

@@ -16,6 +16,8 @@ export type UtxoBox = {
   creationHeight: number;
   transactionId: string;
   index: number;
+  additionalRegisters: any;
+  confirmed?: boolean;
 };
 
 declare global {

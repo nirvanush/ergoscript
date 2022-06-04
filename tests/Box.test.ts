@@ -8,7 +8,7 @@ describe('Box Builder', () => {
   describe('get/isDefined', () => {
     it('configure get/isDefined', () => {
       const box = new Box(explorerBox);
-      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4.renderedValue);
+      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4?.renderedValue);
       expect(box.R4[Long].isDefined).to.equal(true);
 
       try {
@@ -24,7 +24,7 @@ describe('Box Builder', () => {
   describe('set', () => {
     it('should set the value', async () => {
       const box = new Box(explorerBox);
-      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4.renderedValue);
+      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4?.renderedValue);
       expect(box.R4[Long].isDefined).to.equal(true);
 
       await box.R4.set(3, SigmaType.Long);
@@ -36,7 +36,7 @@ describe('Box Builder', () => {
   describe('setRegisters', () => {
     it('should set the values of register but not reset old registers', async () => {
       const box = new Box(explorerBox);
-      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4.renderedValue);
+      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4?.renderedValue);
       expect(box.R4[Long].isDefined).to.equal(true);
 
       const newBox = await box.setRegisters({
@@ -62,7 +62,7 @@ describe('Box Builder', () => {
   describe('resetRegisters', () => {
     it('should set the values of register but not reset old registers', async () => {
       const box = new Box(explorerBox);
-      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4.renderedValue);
+      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4?.renderedValue);
       expect(box.R4[Long].isDefined).to.equal(true);
 
       const newBox = box.resetRegisters();
@@ -79,7 +79,7 @@ describe('Box Builder', () => {
 
     it('should work with chained functions', async () => {
       const box = new Box(explorerBox);
-      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4.renderedValue);
+      expect(box.R4[Long].get).to.equal(explorerBox.additionalRegisters.R4?.renderedValue);
       expect(box.R4[Long].isDefined).to.equal(true);
 
       const newBox = box.resetRegisters().setRegisters({

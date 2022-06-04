@@ -46,6 +46,7 @@ export type ExplorerBox = {
   boxId?: string;
   transactionId?: string;
   blockId?: string;
+  extension?: {};
 };
 
 export type TypeGetters = {

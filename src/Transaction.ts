@@ -2,7 +2,7 @@ import Box, { Asset, RegisterInput } from './Box';
 import { currentHeight, loadTokensFromWallet } from './helpers';
 import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';
-import { UtxoBox } from 'types';
+import { UtxoBox } from './types';
 
 void wasmModule.loadAsync();
 

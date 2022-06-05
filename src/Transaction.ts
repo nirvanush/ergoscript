@@ -4,7 +4,7 @@ import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';
 import { UtxoBox } from './types';
 
-void wasmModule.loadAsync();
+wasmModule.loadAsync();
 
 type Funds = {
   ERG: number;
@@ -159,7 +159,7 @@ export default class Transaction {
 
     const fundBox = new Box({
       value: funds.ERG,
-      ergoTree: wasmModule.SigmaRust.Address.from_mainnet_str(toAddress)
+      ergoTree: (await wasmModule.SigmaRust).Address.from_mainnet_str(toAddress)
         .to_ergo_tree()
         .to_base16_bytes(),
       assets: funds.tokens.map(t => ({ tokenId: t.tokenId, amount: t.amount })),
@@ -177,7 +177,7 @@ export default class Transaction {
 
     const changeBox = new Box({
       value: -have['ERG'],
-      ergoTree: wasmModule.SigmaRust.Address.from_mainnet_str(args.changeAddress)
+      ergoTree: (await wasmModule.SigmaRust).Address.from_mainnet_str(args.changeAddress)
         .to_ergo_tree()
         .to_base16_bytes(),
       assets: Object.keys(have)

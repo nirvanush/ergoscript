@@ -2,19 +2,17 @@ import * as SigmaRust from 'ergo-lib-wasm-browser';
 
 const IS_TEST = !!process.env.TS_NODE_COMPILER_OPTIONS;
 
-type SigmaRustType = typeof SigmaRust;
+type SigmaRustType = typeof SigmaRust & { default: Promise<any> };
 class WasmLoader {
   private _sigmaRust?: SigmaRustType;
   private _loaded = false;
 
   public async loadAsync(): Promise<void> {
     if (IS_TEST) {
-      console.log('is test');
       const PACKAGE = IS_TEST ? 'nodejs' : 'browser';
       this._sigmaRust = (await import(`ergo-lib-wasm-${PACKAGE}`)) as any;
     } else {
-      console.log('is not test');
-      this._sigmaRust = await await import(`ergo-lib-wasm-browser`);
+      this._sigmaRust = await require(`ergo-lib-wasm-browser`);
     }
 
     this._loaded = true;

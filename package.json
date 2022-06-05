@@ -1,6 +1,6 @@
 {
-  "name": "ergoscript.js",
-  "version": "0.0.5",
+  "name": "ergoscript",
+  "version": "0.0.6",
   "description": "Ergo transaction builder optimized for ErgoScript development",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nirvanush/ergoscript.js.git"
+    "url": "https://github.com/nirvanush/ergoscript.git"
   },
   "license": "MIT",
   "author": {
@@ -41,9 +41,9 @@
     "codecov"
   ],
   "bugs": {
-    "url": "https://github.com/nirvanush/ergoscript.js/issues"
+    "url": "https://github.com/nirvanush/ergoscript/issues"
   },
-  "homepage": "https://github.com/nirvanush/ergoscript.js#readme",
+  "homepage": "https://github.com/nirvanush/ergoscript#readme",
   "dependencies": {
     "@coinbarn/ergo-ts": "^0.3.0",
     "ergo-lib-wasm-browser": "^0.16.1",

@@ -72,6 +72,37 @@ const tx = new Transaction([
 const OUTPUT_0 = INPUT_0.resetRegisters();
 ```
 
+### Test script with Mocha test
+
+```ts
+import buildScriptScope from 'ergoscript/lib/ergoscriptMock';
+
+const script = `sigmaProp(true)`;
+
+const tx = new Transaction([
+  {
+    funds: {
+      ERG: 100000,
+      tokens: [{ tokenId: 'token id', amount: '1' }],
+    },
+    toAddress: 'address',
+    changeAddress: 'address',
+    additionalRegisters: {},
+  },
+]);
+
+describe('Rentring transaction', () => {
+  it('reduces to true', async () => {
+    const txBuilt = await tx.build();
+
+    const simulator = await buildScriptScope(txBuilt);
+    const response = simulator.execute(script);
+
+    expect(response).to.be.true;
+  });
+});
+```
+
 [build-img]: https://github.com/nirvanush/ergoscript/actions/workflows/release.yml/badge.svg
 [build-url]: https://github.com/nirvanush/ergoscript/actions/workflows/release.yml
 [npm-img]: https://img.shields.io/npm/v/ergoscript

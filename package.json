@@ -1,9 +1,9 @@
 {
   "name": "ergoscript.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Ergo transaction builder optimized for ErgoScript development",
-  "main": "./lib/src/index.js",
-  "types": "./lib/src/index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib/**/*"
   ],

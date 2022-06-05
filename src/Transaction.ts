@@ -4,8 +4,6 @@ import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';
 import { UtxoBox } from './types';
 
-wasmModule.loadAsync();
-
 type Funds = {
   ERG: number;
   tokens: Asset[];
@@ -106,6 +104,7 @@ export default class Transaction {
   }
 
   private async _sendFunds(args: TxConfig) {
+    wasmModule.loadAsync();
     const { funds, toAddress, additionalRegisters = {} } = args;
 
     funds.ERG = funds.ERG ? funds.ERG : funds.tokens.length ? MIN_FEE : 0;

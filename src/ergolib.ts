@@ -9,9 +9,11 @@ class WasmLoader {
 
   public async loadAsync(): Promise<void> {
     if (IS_TEST) {
+      console.log('is test');
       const PACKAGE = IS_TEST ? 'nodejs' : 'browser';
       this._sigmaRust = (await import(`ergo-lib-wasm-${PACKAGE}`)) as any;
     } else {
+      console.log('is not test');
       this._sigmaRust = await await import(`ergo-lib-wasm-browser`);
     }
 

@@ -16,7 +16,7 @@ class WasmLoader {
         this._sigmaRust = await require('ergo-lib-wasm-browser');
         this._loaded = true;
       } catch (e) {
-        console.log('skipped loading wasm');
+        console.log('ergoscriptJS: skipped loading wasm');
       }
     }
   }

@@ -1,18 +1,9 @@
 import { expect } from 'chai';
 import Transaction, { SigmaType } from '../src';
 import { NANO_ERG_IN_ERG } from '../src/constants';
-import { utxos } from './jsons/utxos';
-import { tokensFromWallet } from './jsons/loadTokensFromWallet.mock';
 import * as ergoTs from '@coinbarn/ergo-ts';
 
-function mockInstance(txInstance: Transaction): void {
-  txInstance.get_utxos = async (amount: string, tokenId: string) =>
-    new Promise(resolve => resolve(utxos));
-  txInstance.get_change_address = async () =>
-    new Promise(resolve => resolve('9hu1CHr4MBd7ikUjag59AZ9VHaacvTRz34u58eoLp7ZF3d1oSXk'));
-  txInstance.loadTokensFromWallet = async () => new Promise(resolve => resolve(tokensFromWallet));
-  txInstance.currentHeight = async () => new Promise(resolve => resolve(760493));
-}
+import { mockInstance } from './helpers/mockInstance';
 
 describe('Transaction', () => {
   describe('new Transaction', () => {

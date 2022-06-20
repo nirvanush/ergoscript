@@ -3,6 +3,7 @@ import { currentHeight, loadTokensFromWallet } from './helpers';
 import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';
 import { UtxoBox } from './types';
+import { Address } from '@coinbarn/ergo-ts';
 
 type Funds = {
   ERG: number;
@@ -68,15 +69,18 @@ export default class Transaction {
   }
 
   async build(): Promise<this> {
+    const recipients: TxConfig[] = [];
+
     for (const item of this.config) {
       if ((item as InputOutput).length) {
         this.inputs.push((item as InputOutput)[0]);
         this.outputs.push((item as InputOutput)[1]);
       } else if ((item as TxConfig).funds) {
-        await this._sendFunds(item as TxConfig);
+        recipients.push(item as TxConfig);
       }
     }
 
+    await this._sendFunds(recipients);
     return this;
   }
 
@@ -107,21 +111,36 @@ export default class Transaction {
     return currentHeight();
   }
 
-  private async _sendFunds(args: TxConfig) {
-    wasmModule.loadAsync();
-    const { funds, toAddress, additionalRegisters = {} } = args;
-
-    funds.ERG = funds.ERG ? funds.ERG : funds.tokens.length ? MIN_FEE : 0;
-
+  private _sumFunds(recipients: TxConfig[]) {
     const optimalTxFee = MIN_FEE;
+
+    const sumFunds = { ERG: optimalTxFee, tokens: [] as Asset[] };
+
+    recipients.forEach(config => {
+      const { funds } = config;
+      funds.ERG = funds.ERG ? funds.ERG : funds.tokens.length ? MIN_FEE : 0;
+
+      sumFunds.ERG += funds.ERG;
+      sumFunds.tokens.push(...funds.tokens);
+    });
+
     const need = {
-      ERG: funds.ERG + optimalTxFee,
-      ...funds.tokens.reduce<Record<string, number>>((map, token) => {
+      ERG: sumFunds.ERG,
+      ...sumFunds.tokens.reduce<Record<string, number>>((map, token) => {
         map[token.tokenId] = map[token.tokenId] || 0;
         map[token.tokenId] += token.amount;
         return map;
       }, {}),
     };
+
+    return need;
+  }
+
+  private async _sendFunds(recipients: TxConfig[]) {
+    wasmModule.loadAsync();
+
+    const optimalTxFee = MIN_FEE;
+    const need = this._sumFunds(recipients);
     const creationHeight = await this.currentHeight();
     const have = JSON.parse(JSON.stringify(need));
 
@@ -160,15 +179,16 @@ export default class Transaction {
       throw Error('Not enough balance in the wallet!');
     }
 
-    const fundBox = new Box({
-      value: funds.ERG,
-      ergoTree: (await wasmModule.SigmaRust).Address.from_mainnet_str(toAddress)
-        .to_ergo_tree()
-        .to_base16_bytes(),
-      assets: funds.tokens.map(t => ({ tokenId: t.tokenId, amount: t.amount })),
-      additionalRegisters: {},
-      creationHeight,
-    }).setRegisters(additionalRegisters);
+    const fundBoxes = recipients.map(config => {
+      const { additionalRegisters, funds, toAddress } = config;
+      return new Box({
+        value: funds.ERG,
+        ergoTree: new Address(toAddress).ergoTree,
+        assets: funds.tokens.map(t => ({ tokenId: t.tokenId, amount: t.amount })),
+        additionalRegisters: {},
+        creationHeight,
+      }).setRegisters(additionalRegisters);
+    });
 
     const feeBox = new Box({
       value: optimalTxFee,
@@ -180,11 +200,7 @@ export default class Transaction {
 
     const changeBox = new Box({
       value: -have['ERG'],
-      ergoTree: (await wasmModule.SigmaRust).Address.from_mainnet_str(
-        args.changeAddress || (await this.get_change_address())
-      )
-        .to_ergo_tree()
-        .to_base16_bytes(),
+      ergoTree: new Address(await this.get_change_address()).ergoTree,
       assets: Object.keys(have)
         .filter(key => key !== 'ERG')
         .filter(key => have[key] < 0)
@@ -206,7 +222,7 @@ export default class Transaction {
     });
 
     this.inputs.push(...inputs);
-    this.outputs.push(...[fundBox, changeBox, feeBox].filter(box => box.value > 0));
+    this.outputs.push(...[...fundBoxes, changeBox, feeBox].filter(box => box.value > 0));
     this.dataInputs = [];
     this.fee = optimalTxFee;
 

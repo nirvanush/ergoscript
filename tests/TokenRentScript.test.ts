@@ -2,10 +2,9 @@ import { expect } from 'chai';
 import buildScriptScope from '../src/ergoscriptMock';
 import Box, { SigmaType, ExplorerBox } from '../src/Box';
 import explorerBox from './jsons/explorer-locked-box';
-import { Address, minBoxValue } from '@coinbarn/ergo-ts';
+import { Address } from '@coinbarn/ergo-ts';
 import Transaction from '../src';
-import { utxos } from './jsons/utxos';
-import { tokensFromWallet } from './jsons/loadTokensFromWallet.mock';
+import { mockInstance } from './helpers/mockInstance';
 
 const { Long, CollByte } = SigmaType;
 const changeAddress = '9fEei1zvMr5CLPxpagFt4fHMyVyGJWMkowd2ezNhUyNfUZjhVPE';
@@ -57,16 +56,10 @@ describe('Renting script', () => {
             tokens: [],
           },
           toAddress: Address.fromErgoTree(INPUT_0.R4[CollByte].get).address,
-          changeAddress: changeAddress,
           additionalRegisters: {},
         },
       ]);
-
-      txInstance.get_utxos = async (amount: string, tokenId: string) =>
-        new Promise(resolve => resolve(utxos));
-      txInstance.loadTokensFromWallet = async () =>
-        new Promise(resolve => resolve(tokensFromWallet));
-      txInstance.currentHeight = async () => new Promise(resolve => resolve(760493));
+      mockInstance(txInstance, { changeAddress, height: 32 });
     });
 
     it('allows to modify registers', async () => {
@@ -90,16 +83,11 @@ describe('Renting script', () => {
             tokens: [],
           },
           toAddress: Address.fromErgoTree(INPUT_0.R4[CollByte].get).address,
-          changeAddress: changeAddress,
           additionalRegisters: {},
         },
       ]);
 
-      txInstance.get_utxos = async (amount: string, tokenId: string) =>
-        new Promise(resolve => resolve(utxos));
-      txInstance.loadTokensFromWallet = async () =>
-        new Promise(resolve => resolve(tokensFromWallet));
-      txInstance.currentHeight = async () => new Promise(resolve => resolve(760493));
+      mockInstance(txInstance, { changeAddress, height: 34 });
     });
 
     it('script reduces to false', async () => {

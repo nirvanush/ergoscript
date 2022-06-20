@@ -26,10 +26,38 @@ const tx = new Transaction([
       tokens: [{ tokenId: 'token id', amount: '1' }],
     },
     toAddress: 'address',
-    changeAddress: 'address',
     additionalRegisters: {},
   },
 ]);
+
+const unsignedTx = (await tx.build()).toJSON();
+
+// using ergo wallet
+const signedTx = await ergo.sign_tx(unsignedTx);
+await ergo.submit_tx(signedTx);
+```
+
+### Multiple recipients / airdrop 
+
+```ts
+const tokenId = '<tokenId>'
+const recipients = [
+  { address: '<address_1>', amount: 1 },
+  { address: '<address_2>', amount: 10 },
+  { address: '<address_3>', amount: 100 },
+  { address: '<address_4>', amount: 1000 }
+]
+
+const tx = new Transaction(recipients.map(rec => {
+  return {
+    funds: {
+      ERG: 100000,
+      tokens: [{ tokenId, amount: rec.amount }],
+    },
+    toAddress: rec.address,
+    additionalRegisters: {},
+  }
+}));
 
 const unsignedTx = (await tx.build()).toJSON();
 
@@ -63,7 +91,6 @@ const tx = new Transaction([
       tokens: [{ tokenId: 'token id', amount: '1' }],
     },
     toAddress: 'address',
-    changeAddress: 'address',
     additionalRegisters: {},
   },
 ]);
@@ -86,7 +113,6 @@ const tx = new Transaction([
       tokens: [{ tokenId: 'token id', amount: '1' }],
     },
     toAddress: 'address',
-    changeAddress: 'address',
     additionalRegisters: {},
   },
 ]);

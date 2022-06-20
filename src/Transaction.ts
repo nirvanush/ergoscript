@@ -12,7 +12,7 @@ type Funds = {
 type TxConfig = {
   funds: Funds;
   toAddress: string;
-  changeAddress: string;
+  changeAddress?: string;
   additionalRegisters: {
     R4?: RegisterInput;
     R5?: RegisterInput;
@@ -93,6 +93,10 @@ export default class Transaction {
 
   async get_utxos(amount: string, tokenId: string): Promise<UtxoBox[]> {
     return ergo.get_utxos(amount, tokenId);
+  }
+
+  async get_change_address() {
+    return ergo.get_change_address();
   }
 
   async loadTokensFromWallet(): Promise<any> {
@@ -176,7 +180,9 @@ export default class Transaction {
 
     const changeBox = new Box({
       value: -have['ERG'],
-      ergoTree: (await wasmModule.SigmaRust).Address.from_mainnet_str(args.changeAddress)
+      ergoTree: (await wasmModule.SigmaRust).Address.from_mainnet_str(
+        args.changeAddress || (await this.get_change_address())
+      )
         .to_ergo_tree()
         .to_base16_bytes(),
       assets: Object.keys(have)

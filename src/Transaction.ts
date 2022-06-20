@@ -118,9 +118,9 @@ export default class Transaction {
 
     recipients.forEach(config => {
       const { funds } = config;
-      funds.ERG = funds.ERG ? funds.ERG : funds.tokens.length ? MIN_FEE : 0;
+      const erg = funds.ERG ? funds.ERG : funds.tokens.length ? MIN_FEE : 0;
 
-      sumFunds.ERG += funds.ERG;
+      sumFunds.ERG += erg;
       sumFunds.tokens.push(...funds.tokens);
     });
 
@@ -182,7 +182,7 @@ export default class Transaction {
     const fundBoxes = recipients.map(config => {
       const { additionalRegisters, funds, toAddress } = config;
       return new Box({
-        value: funds.ERG,
+        value: funds.ERG ? funds.ERG : funds.tokens.length ? MIN_FEE : 0,
         ergoTree: new Address(toAddress).ergoTree,
         assets: funds.tokens.map(t => ({ tokenId: t.tokenId, amount: t.amount })),
         additionalRegisters: {},

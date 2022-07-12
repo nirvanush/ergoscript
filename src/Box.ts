@@ -6,6 +6,7 @@ export enum SigmaType {
   Long = 'Long',
   CollByte = 'Coll[Byte]',
   Int = 'Int',
+  Raw = 'Raw',
 }
 
 export type SerializedRegister = {
@@ -77,6 +78,9 @@ export class Register {
 
       case SigmaType.CollByte:
         this.register.serializedValue = encodeHex(value);
+        break;
+      case SigmaType.Raw:
+        this.register.serializedValue = value;
         break;
     }
 

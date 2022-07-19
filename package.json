@@ -1,6 +1,6 @@
 {
   "name": "ergoscript",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Ergo transaction builder optimized for ErgoScript development",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -46,7 +46,11 @@
   "homepage": "https://github.com/nirvanush/ergoscript#readme",
   "dependencies": {
     "@coinbarn/ergo-ts": "^0.3.0",
-    "ergo-lib-wasm-browser": "^0.16.1",
+    "axios-retry": "^3.3.1",
+    "bignumber.js": "^9.0.2",
+    "ergo-lib-wasm-browser": "0.18.0",
+    "ergo-lib-wasm-nodejs": "0.18.0",
+    "json-bigint": "^1.0.0",
     "lodash": "^4.17.21",
     "mocha": "^10.0.0",
     "superagent": "^7.1.6"
@@ -55,6 +59,7 @@
     "@ryansonshine/commitizen": "^4.2.8",
     "@ryansonshine/cz-conventional-changelog": "^3.3.4",
     "@types/chai": "^4.3.1",
+    "@types/json-bigint": "^1.0.1",
     "@types/lodash": "^4.14.182",
     "@types/mocha": "^9.1.1",
     "@types/node": "^12.20.11",
@@ -62,7 +67,6 @@
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "chai": "^4.3.6",
-    "ergo-lib-wasm-nodejs": "^0.16.1",
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.26.0",

@@ -1,6 +1,6 @@
-import { UtxoBox } from '../../src/types';
+import { ErgoBox } from '../../src/wallet/types/connector';
 
-export const utxos: UtxoBox[] = [
+export const utxos: ErgoBox[] = [
   {
     boxId: '484c5a0bf49f5810009aa7e93b870ff3bb2f297084c49141d79d4acf306ca427',
     transactionId: '224b80ace03efe32a5340af45a231f66df86a2e605d372008f076e7e9b693aff',

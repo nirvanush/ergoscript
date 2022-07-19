@@ -22,6 +22,7 @@ import {
   UnsignedTransaction,
   Wallet,
 } from 'ergo-lib-wasm-nodejs';
+import { UtxoBox } from '../types';
 
 export default class ErgoWallet {
   private wallet!: Wallet;
@@ -75,7 +76,7 @@ export default class ErgoWallet {
     return txResponse.id;
   }
 
-  async get_utxos(amount: string, tokenId: string = ERG_TOKEN_ID) {
+  async get_utxos(amount: string, tokenId: string = ERG_TOKEN_ID, chainedInputs?: ErgoBox[]) {
     let iTokenId = ERG_TOKEN_ID;
     let iAmount = new BigNumber(0);
 
@@ -91,7 +92,7 @@ export default class ErgoWallet {
       }
     }
 
-    let selected = await fetchBoxes([this.publicAddress]);
+    let selected = chainedInputs || (await fetchBoxes([this.publicAddress]));
 
     if (iTokenId != ERG_TOKEN_ID) {
       selected = selected.filter(

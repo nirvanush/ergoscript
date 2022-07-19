@@ -5,6 +5,7 @@ import { wasmModule } from './ergolib';
 import { UtxoBox } from './types';
 import { Address } from '@coinbarn/ergo-ts';
 import ErgoWallet from './wallet/Wallet';
+import { ErgoBox } from './wallet/types/connector';
 
 type Funds = {
   ERG: number;
@@ -61,11 +62,13 @@ export default class Transaction {
   dataInputs: [];
   config: (InputOutput | TxConfig)[];
   wallet: ErgoWallet | undefined;
+  chainedInputs: UtxoBox[] | undefined;
 
   constructor(
     config: (InputOutput | TxConfig)[],
     params?: {
       wallet?: ErgoWallet;
+      chainedInputs?: UtxoBox[];
     }
   ) {
     this.inputs = [];
@@ -74,6 +77,7 @@ export default class Transaction {
     this.dataInputs = [];
     this.config = config;
     this.wallet = params?.wallet;
+    this.chainedInputs = params?.chainedInputs;
   }
 
   async build(): Promise<this> {
@@ -103,8 +107,14 @@ export default class Transaction {
     return tx;
   }
 
-  async get_utxos(amount: string, tokenId: string): Promise<UtxoBox[]> {
-    return (await (this.wallet || ergo).get_utxos(amount, tokenId)) as UtxoBox[];
+  async get_utxos(amount: string, tokenId: string): Promise<ErgoBox[]> {
+    const wallet = this.wallet || ergo;
+
+    if (this.chainedInputs && wallet instanceof ErgoWallet) {
+      return await wallet.get_utxos(amount, tokenId, this.chainedInputs as ErgoBox[]);
+    } else {
+      return (await (this.wallet || ergo).get_utxos(amount, tokenId)) as ErgoBox[];
+    }
   }
 
   async get_change_address() {

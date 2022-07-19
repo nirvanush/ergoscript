@@ -4,6 +4,7 @@ import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';
 import { UtxoBox } from './types';
 import { Address } from '@coinbarn/ergo-ts';
+import ErgoWallet from './wallet/Wallet';
 
 type Funds = {
   ERG: number;
@@ -59,13 +60,20 @@ export default class Transaction {
   fee: number;
   dataInputs: [];
   config: (InputOutput | TxConfig)[];
+  wallet: ErgoWallet | undefined;
 
-  constructor(config: (InputOutput | TxConfig)[]) {
+  constructor(
+    config: (InputOutput | TxConfig)[],
+    params?: {
+      wallet?: ErgoWallet;
+    }
+  ) {
     this.inputs = [];
     this.outputs = [];
     this.fee = MIN_FEE;
     this.dataInputs = [];
     this.config = config;
+    this.wallet = params?.wallet;
   }
 
   async build(): Promise<this> {
@@ -96,11 +104,11 @@ export default class Transaction {
   }
 
   async get_utxos(amount: string, tokenId: string): Promise<UtxoBox[]> {
-    return ergo.get_utxos(amount, tokenId);
+    return (await (this.wallet || ergo).get_utxos(amount, tokenId)) as UtxoBox[];
   }
 
   async get_change_address() {
-    return ergo.get_change_address();
+    return (this.wallet || ergo).get_change_address();
   }
 
   async loadTokensFromWallet(): Promise<any> {

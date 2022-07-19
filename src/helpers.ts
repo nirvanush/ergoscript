@@ -1,10 +1,10 @@
 import { Asset, Balance } from './types';
 import request from 'superagent';
+import { explorerService } from './wallet/explorer/explorerService';
 
 export async function currentHeight(): Promise<any> {
-  return await request
-    .get('https://api.ergoplatform.com/api/v0/blocks?limit=1')
-    .then((res: any) => res.body.items[0].height);
+  const resp = await explorerService.getBlockHeaders({ limit: 1 });
+  return resp[0].height;
 }
 
 interface Dic {
@@ -12,6 +12,7 @@ interface Dic {
 }
 
 export async function getBalance(addr: string): Promise<Balance> {
+  await explorerService.getAddressBalance(addr);
   return await fetch(
     `https://api.ergoplatform.com/api/v1/addresses/${addr}/balance/confirmed`
   ).then(res => res.json());

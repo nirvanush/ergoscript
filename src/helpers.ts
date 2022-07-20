@@ -1,6 +1,8 @@
 import { Asset, Balance } from './types';
-import request from 'superagent';
 import { explorerService } from './wallet/explorer/explorerService';
+import ErgoWallet from './wallet/Wallet';
+import axios from 'axios';
+import { API_URL } from './wallet/constants/explorer';
 
 export async function currentHeight(): Promise<any> {
   const resp = await explorerService.getBlockHeaders({ limit: 1 });
@@ -13,14 +15,14 @@ interface Dic {
 
 export async function getBalance(addr: string): Promise<Balance> {
   await explorerService.getAddressBalance(addr);
-  return await fetch(
-    `https://api.ergoplatform.com/api/v1/addresses/${addr}/balance/confirmed`
-  ).then(res => res.json());
+  return await axios
+    .get(`${API_URL}/api/v1/addresses/${addr}/balance/confirmed`)
+    .then(response => response.data);
 }
 
-export async function loadTokensFromWallet(): Promise<Dic> {
-  const addresses: string[] = (await ergo.get_used_addresses()).concat(
-    await ergo.get_unused_addresses()
+export async function loadTokensFromWallet(wallet: ErgoWallet | Ergo): Promise<Dic> {
+  const addresses: string[] = (await wallet.get_used_addresses()).concat(
+    await wallet.get_unused_addresses()
   );
   const tokens: Dic = {};
 

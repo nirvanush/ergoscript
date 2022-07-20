@@ -2,10 +2,10 @@ import Box, { Asset, RegisterInput } from './Box';
 import { currentHeight, loadTokensFromWallet } from './helpers';
 import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';
-import { UtxoBox } from './types';
 import { Address } from '@coinbarn/ergo-ts';
 import ErgoWallet from './wallet/Wallet';
-import { ErgoBox } from './wallet/types/connector';
+import { ErgoBox, UnsignedTx } from './wallet/types/connector';
+import { Token } from 'ergo-lib-wasm-browser';
 
 type Funds = {
   ERG: number;
@@ -35,7 +35,7 @@ export type TransactionJson = {
     ergoTree: string;
     assets: Asset[];
     boxId?: string | undefined;
-    transactionId?: string | undefined;
+    transactionId: string;
     blockId?: string | undefined;
   }[];
   outputs: {
@@ -62,13 +62,13 @@ export default class Transaction {
   dataInputs: [];
   config: (InputOutput | TxConfig)[];
   wallet: ErgoWallet | undefined;
-  chainedInputs: UtxoBox[] | undefined;
+  chainedInputs: ErgoBox[] | undefined;
 
   constructor(
     config: (InputOutput | TxConfig)[],
     params?: {
       wallet?: ErgoWallet;
-      chainedInputs?: UtxoBox[];
+      chainedInputs?: ErgoBox[];
     }
   ) {
     this.inputs = [];
@@ -96,7 +96,7 @@ export default class Transaction {
     return this;
   }
 
-  toJSON(): TransactionJson {
+  toJSON(): UnsignedTx {
     const tx = {
       inputs: this.inputs.map(box => box.toJSON()),
       outputs: this.outputs.map(box => box.toJSON()),
@@ -122,7 +122,7 @@ export default class Transaction {
   }
 
   async loadTokensFromWallet(): Promise<any> {
-    return loadTokensFromWallet();
+    return loadTokensFromWallet(this.wallet || ergo);
   }
 
   async currentHeight(): Promise<number> {
@@ -139,7 +139,13 @@ export default class Transaction {
       const erg = funds.ERG ? funds.ERG : funds.tokens.length ? MIN_FEE : 0;
 
       sumFunds.ERG += erg;
-      sumFunds.tokens.push(...funds.tokens);
+
+      for (const t of funds.tokens) {
+        // only sum tokens that are not newly created
+        if (!t.isMint) {
+          sumFunds.tokens.push(t);
+        }
+      }
     });
 
     const need = {
@@ -202,7 +208,10 @@ export default class Transaction {
       return new Box({
         value: funds.ERG ? funds.ERG : funds.tokens.length ? MIN_FEE : 0,
         ergoTree: new Address(toAddress).ergoTree,
-        assets: funds.tokens.map(t => ({ tokenId: t.tokenId, amount: t.amount })),
+        assets: funds.tokens.map(t => {
+          t.tokenId = t.tokenId.length ? t.tokenId : boxes[0].boxId;
+          return { tokenId: t.tokenId, amount: t.amount };
+        }),
         additionalRegisters: {},
         creationHeight,
       }).setRegisters(additionalRegisters);

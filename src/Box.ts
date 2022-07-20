@@ -36,6 +36,7 @@ export type Asset = {
   name?: string;
   decimals?: number;
   type?: string;
+  isMint?: boolean;
 };
 
 export type ExplorerBox = {

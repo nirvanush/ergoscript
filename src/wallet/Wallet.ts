@@ -61,7 +61,7 @@ export default class ErgoWallet {
     throw Error('not implemented yet');
   }
 
-  sign_tx(unsignedTx: UnsignedTx): string {
+  sign_tx(unsignedTx: UnsignedTx): any {
     const unspentBoxes = ErgoBoxes.from_boxes_json(unsignedTx.inputs);
     const dataInputBoxes = ErgoBoxes.from_boxes_json(unsignedTx.dataInputs);
     const tx = UnsignedTransaction.from_json(JSONBig.stringify(unsignedTx));

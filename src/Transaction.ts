@@ -96,7 +96,7 @@ export default class Transaction {
     return this;
   }
 
-  toJSON(): UnsignedTx {
+  toJSON(): TransactionJson {
     const tx = {
       inputs: this.inputs.map(box => box.toJSON()),
       outputs: this.outputs.map(box => box.toJSON()),

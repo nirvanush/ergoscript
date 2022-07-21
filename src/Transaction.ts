@@ -4,8 +4,7 @@ import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';
 import { Address } from '@coinbarn/ergo-ts';
 import ErgoWallet from './wallet/Wallet';
-import { ErgoBox, UnsignedTx } from './wallet/types/connector';
-import { Token } from 'ergo-lib-wasm-browser';
+import { ErgoBox } from './wallet/types/connector';
 
 type Funds = {
   ERG: number;
@@ -35,7 +34,7 @@ export type TransactionJson = {
     ergoTree: string;
     assets: Asset[];
     boxId?: string | undefined;
-    transactionId: string;
+    transactionId?: string | undefined;
     blockId?: string | undefined;
   }[];
   outputs: {
@@ -96,7 +95,7 @@ export default class Transaction {
     return this;
   }
 
-  toJSON(): UnsignedTx {
+  toJSON(): TransactionJson {
     const tx = {
       inputs: this.inputs.map(box => box.toJSON()),
       outputs: this.outputs.map(box => box.toJSON()),
@@ -237,7 +236,7 @@ export default class Transaction {
             amount: -have[key],
           };
         }),
-      additionalRegisters: {},
+      additionalRegisters: this.chainedInputs ? this.chainedInputs[0].additionalRegisters : {},
       creationHeight,
     });
 

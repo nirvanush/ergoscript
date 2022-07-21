@@ -1,4 +1,4 @@
-import { encodeNum, encodeHex } from './serializer';
+import { encodeNum, encodeHex, encodeByteArray } from './serializer';
 import _ from 'lodash';
 import { Address } from '@coinbarn/ergo-ts';
 
@@ -7,6 +7,7 @@ export enum SigmaType {
   CollByte = 'Coll[Byte]',
   Int = 'Int',
   Raw = 'Raw',
+  ByteArray = 'ByteArray',
 }
 
 export type SerializedRegister = {
@@ -62,6 +63,14 @@ export class Register {
   register?: SerializedRegister;
 
   constructor(register?: SerializedRegister) {
+    if (typeof register === 'string') {
+      register = {
+        serializedValue: register,
+        sigmaType: SigmaType.CollByte,
+        renderedValue: register,
+      };
+    }
+
     this.register = _.cloneDeep(register);
     this.Long = this._buildRegister();
     this['Coll[Byte]'] = this._buildRegister();
@@ -77,9 +86,20 @@ export class Register {
         this.register.serializedValue = encodeNum(value.toString());
         break;
 
+      case SigmaType.Int:
+        this.register.serializedValue = encodeNum(value.toString(), true);
+        break;
+
       case SigmaType.CollByte:
         this.register.serializedValue = encodeHex(value);
         break;
+
+      case SigmaType.ByteArray:
+        const enc = new TextEncoder();
+        const byteArray = enc.encode(value);
+        this.register.serializedValue = encodeByteArray(byteArray);
+        break;
+
       case SigmaType.Raw:
         this.register.serializedValue = value;
         break;
@@ -147,6 +167,7 @@ export default class Box {
     blockId?: string | undefined;
   } {
     const additionalRegisters: any = {};
+
     if (this.R4.register) additionalRegisters.R4 = this.R4.register.serializedValue;
     if (this.R5.register) additionalRegisters.R5 = this.R5.register.serializedValue;
     if (this.R6.register) additionalRegisters.R6 = this.R6.register.serializedValue;

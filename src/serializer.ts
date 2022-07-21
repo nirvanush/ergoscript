@@ -22,7 +22,7 @@ export async function colTuple(
   ).encode_to_base16();
 }
 
-export async function encodeByteArray(reg: Uint8Array): Promise<string> {
+export function encodeByteArray(reg: Uint8Array): string {
   return wasmModule.SigmaRust.Constant.from_byte_array(reg).encode_to_base16();
 }
 
@@ -36,7 +36,7 @@ export function encodeNum(n: string, isInt = false): string {
   if (isInt) return wasmModule.SigmaRust.Constant.from_i32(+n).encode_to_base16();
   else
     return wasmModule.SigmaRust.Constant.from_i64(
-      wasmModule.SigmaRust.I64.from_str(n as unknown as string)
+      wasmModule.SigmaRust.I64.from_str((n as unknown) as string)
     ).encode_to_base16();
 }
 

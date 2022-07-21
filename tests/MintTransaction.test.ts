@@ -3,9 +3,8 @@ import Transaction, { SigmaType, TransactionJson } from '../src';
 import { NANO_ERG_IN_ERG } from '../src/constants';
 import * as ergoTs from '@coinbarn/ergo-ts';
 
-import { mockInstance } from './helpers/mockInstance';
 import ErgoWallet from '../src/wallet/Wallet';
-import { UnsignedTx } from '../src/wallet/types/connector';
+import { ErgoBox } from '../src/wallet/types/connector';
 
 // R4 - name // R4 - royalty V
 // R5 - description V
@@ -14,84 +13,200 @@ import { UnsignedTx } from '../src/wallet/types/connector';
 // R8 - SHA256 hash of picture
 // R9 - cover photo
 
-describe('Transaction', () => {
-  describe('new mint transaction', () => {
-    it('creates a first mint', async () => {
-      const wallet = await new ErgoWallet().fromMnemonics('dial million permit enact liquid inject lion silent giggle please impose toilet swear upper sleep');
-      wallet.setPublicAddress('9fz1p5StMKKzdvKH4TsfvnoSPCBbqKgk19gwirCZR9hxr4KkvR1');
+type NFTParams = {
+  name: string;
+  description: string;
+  artUrl: string;
+  checkSum?: string;
+  sendTo?: string;
+};
 
-      const txInstance = new Transaction([
+class NFTCollection {
+  royalties: number; // 20,30
+  mintWallet: ErgoWallet;
+  artType: string;
+  royaltiesBox: ErgoBox | null;
+  nftParams: NFTParams[];
+  chain: TransactionJson[];
+
+  constructor(args: { royalties: number; mintWallet: ErgoWallet; artType: string }) {
+    this.royalties = args.royalties;
+    this.mintWallet = args.mintWallet;
+    this.artType = args.artType;
+    this.royaltiesBox = null;
+    this.nftParams = [];
+    this.chain = [];
+  }
+
+  add(args: NFTParams) {
+    this.nftParams.push(args);
+
+    return this;
+  }
+
+  async mint() {
+    for (const params of this.nftParams) {
+      if (!this.royaltiesBox) {
+        // create a mint box first
+        await this._createRoyaltiesBoxTx();
+        await this._createMintTx(params);
+      } else {
+        await this._createMintTx(params);
+      }
+    }
+  }
+
+  private async _createRoyaltiesBoxTx() {
+    const tx = new Transaction(
+      [
+        {
+          funds: {
+            ERG: this.nftParams.length * 0.01 * NANO_ERG_IN_ERG,
+            tokens: [],
+          },
+          toAddress: this.mintWallet.publicAddress,
+          additionalRegisters: {
+            R4: { value: 50, type: SigmaType.Int },
+            R5: {
+              value: new ergoTs.Address(this.mintWallet.publicAddress).ergoTree,
+              type: SigmaType.CollByte,
+            },
+          },
+        },
+      ],
+      { wallet: this.mintWallet }
+    );
+
+    const unsignedTx = await tx.build();
+    const signedTx = await this.mintWallet.sign_tx(unsignedTx.toJSON());
+    console.log(JSON.stringify(signedTx));
+    this.royaltiesBox = signedTx.outputs[0];
+    const txHash = await this.mintWallet.submit_tx(signedTx);
+
+    console.log('royalties box submitted: ', txHash);
+    console.log('royalties box submitted');
+  }
+
+  private async _createMintTx(params: NFTParams) {
+    if (!this.royaltiesBox) throw new Error('No royalties box defined');
+
+    const tx = new Transaction(
+      [
         {
           funds: {
             ERG: 0.001 * NANO_ERG_IN_ERG,
             tokens: [
               {
-                tokenId: '',
+                tokenId: this.royaltiesBox.boxId,
                 amount: 1,
-                isMint: true
+                isMint: true,
               },
             ],
           },
-          toAddress: '9hu1CHr4MBd7ikUjag59AZ9VHaacvTRz34u58eoLp7ZF3d1oSXk',
+          toAddress: params.sendTo || this.mintWallet.publicAddress,
           additionalRegisters: {
-            R4: { value: 'Best token ever', type: SigmaType.CollByte },
-            R5: { value: 'Best token ever description', type: SigmaType.CollByte },
+            R4: { value: params.name, type: SigmaType.ByteArray },
+            R5: { value: params.description, type: SigmaType.ByteArray },
             R6: { value: 0, type: SigmaType.Int },
             R7: { value: '0e020101', type: SigmaType.Raw },
-            R8: { value: 'somethings', type: SigmaType.CollByte },
-            R9: { value: 'https://ipfs.io/ipfs/bafybeidrtmn7grzijipexukinmkmlkmpuugjwv5i2hy33gdipql27myshu', type: SigmaType.CollByte }
+            R8: { value: 'checksum', type: SigmaType.ByteArray },
+            R9: { value: params.artUrl, type: SigmaType.ByteArray },
           },
         },
-      ], { wallet });
+      ],
+      { wallet: this.mintWallet, chainedInputs: [this.royaltiesBox] }
+    );
 
-      // mockInstance(txInstance);
+    const unsignedTx = (await tx.build()).toJSON();
+
+    const signedTx = await this.mintWallet.sign_tx(unsignedTx);
+    console.log(JSON.stringify(signedTx));
+    this.royaltiesBox = signedTx.outputs[1];
+
+    try {
+      const txHash = await this.mintWallet.submit_tx(signedTx);
+    } catch (e) {
+      console.error(e);
+    }
+
+    console.log('nft box submitted');
+  }
+}
+
+describe('Transaction', () => {
+  describe('new mint transaction', () => {
+    it.skip('creates a first mint', async () => {
+      const wallet = await new ErgoWallet().fromMnemonics('***');
+      wallet.setPublicAddress('****');
+
+      const txInstance = new Transaction(
+        [
+          {
+            funds: {
+              ERG: 0.001 * NANO_ERG_IN_ERG,
+              tokens: [
+                {
+                  tokenId: '',
+                  amount: 1,
+                  isMint: true,
+                },
+              ],
+            },
+            toAddress: '****',
+            additionalRegisters: {
+              R4: { value: 'Best token ever', type: SigmaType.ByteArray },
+              R5: { value: 'Best token ever description', type: SigmaType.ByteArray },
+              R6: { value: 0, type: SigmaType.Int },
+              R7: { value: '0e020101', type: SigmaType.Raw },
+              R8: { value: 'somethings', type: SigmaType.ByteArray },
+              R9: {
+                value:
+                  'https://ipfs.io/ipfs/bafybeidrtmn7grzijipexukinmkmlkmpuugjwv5i2hy33gdipql27myshu',
+                type: SigmaType.ByteArray,
+              },
+            },
+          },
+        ],
+        { wallet }
+      );
 
       const tx = (await txInstance.build()).toJSON();
-      
+
       try {
         const signedTx = wallet.sign_tx(tx);
-        console.log(signedTx);
-      } catch(e) {
+        console.log(JSON.stringify(signedTx));
+      } catch (e) {
         console.error(e);
       }
       // const txHash = await wallet.submit_tx(signedTx);
       // console.log(txHash);
     });
 
-    // it('creates transaction with multiple outputs addresses', async () => {
-    //   const toAddress = '9hu1CHr4MBd7ikUjag59AZ9VHaacvTRz34u58eoLp7ZF3d1oSXk';
-    //   const changeAddress = '9hu1CHr4MBd7ikUjag59AZ9VHaacvTRz34u58eoLp7ZF3d1oSXk';
+    it.skip('mint two tokens with royalties', async () => {
+      const mintWallet = await new ErgoWallet().fromMnemonics('***');
+      mintWallet.setPublicAddress('9fz1p5StMKKzdvKH4TsfvnoSPCBbqKgk19gwirCZR9hxr4KkvR1');
 
-    //   const txInstance = new Transaction([
-    //     {
-    //       funds: {
-    //         ERG: 0.02 * NANO_ERG_IN_ERG,
-    //         tokens: [],
-    //       },
-    //       toAddress,
-    //       additionalRegisters: {},
-    //     },
-    //     {
-    //       funds: {
-    //         ERG: 0.001 * NANO_ERG_IN_ERG,
-    //         tokens: [
-    //           {
-    //             tokenId: '0cd8c9f416e5b1ca9f986a7f10a84191dfb85941619e49e53c0dc30ebf83324b',
-    //             amount: 1,
-    //           },
-    //         ],
-    //       },
-    //       toAddress,
-    //       additionalRegisters: {},
-    //     },
-    //   ]);
+      const collection = new NFTCollection({
+        royalties: 20,
+        mintWallet: mintWallet,
+        artType: 'image',
+      });
 
-    //   mockInstance(txInstance);
+      collection
+        .add({
+          name: 'Hello World #1',
+          description: 'test mass mint token',
+          artUrl:
+            'https://ipfs.io/ipfs/bafybeidrtmn7grzijipexukinmkmlkmpuugjwv5i2hy33gdipql27myshu',
+        })
+        .add({
+          name: 'Hello World #2',
+          description: 'test mass mint token',
+          artUrl:
+            'https://ipfs.io/ipfs/bafybeidrtmn7grzijipexukinmkmlkmpuugjwv5i2hy33gdipql27myshu',
+        });
 
-    //   const tx = (await txInstance.build()).toJSON();
-    //   const txBuilt = await txInstance.build();
-
-    //   expect(tx.outputs.length).to.equal(4);
-    // });
+      await collection.mint();
+    });
   });
 });

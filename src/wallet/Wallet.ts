@@ -21,8 +21,9 @@ import {
   SecretKeys,
   UnsignedTransaction,
   Wallet,
-} from 'ergo-lib-wasm-nodejs';
+} from 'ergo-lib-wasm-browser';
 import { UtxoBox } from '../types';
+import { TransactionJson } from '../Transaction';
 
 export default class ErgoWallet {
   private wallet!: Wallet;
@@ -61,13 +62,13 @@ export default class ErgoWallet {
     throw Error('not implemented yet');
   }
 
-  sign_tx(unsignedTx: UnsignedTx): any {
+  sign_tx(unsignedTx: TransactionJson): any {
     const unspentBoxes = ErgoBoxes.from_boxes_json(unsignedTx.inputs);
     const dataInputBoxes = ErgoBoxes.from_boxes_json(unsignedTx.dataInputs);
     const tx = UnsignedTransaction.from_json(JSONBig.stringify(unsignedTx));
     const signed = this._sign(tx, unspentBoxes, dataInputBoxes);
 
-    return signed.to_json();
+    return JSON.parse(signed.to_json());
   }
 
   async submit_tx(signedTx: ErgoTx): Promise<string> {

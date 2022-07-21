@@ -28,6 +28,7 @@
     "import/no-unused-modules": "error",
     "import/newline-after-import": "error",
     "@typescript-eslint/no-explicit-any": "off",
+    "no-case-declarations": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "padding-line-between-statements": [
       "error",

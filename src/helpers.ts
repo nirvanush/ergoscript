@@ -1,7 +1,6 @@
-import { Asset, Balance } from './types';
-import { explorerService } from './wallet/explorer/explorerService';
-import ErgoWallet from './wallet/Wallet';
 import axios from 'axios';
+import { Asset, Balance, ErgoWallet } from './types';
+import { explorerService } from './wallet/explorer/explorerService';
 import { API_URL } from './wallet/constants/explorer';
 
 export async function currentHeight(): Promise<any> {

@@ -3,8 +3,8 @@ import { currentHeight, loadTokensFromWallet } from './helpers';
 import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';
 import { Address } from '@coinbarn/ergo-ts';
-import ErgoWallet from './wallet/Wallet';
-import { ErgoBox } from './wallet/types/connector';
+import { ErgoWallet, UtxoBox } from './types';
+import { ErgoBox, Token } from './wallet/types/connector';
 
 type Funds = {
   ERG: number;
@@ -106,10 +106,10 @@ export default class Transaction {
     return tx;
   }
 
-  async get_utxos(amount: string, tokenId: string): Promise<ErgoBox[]> {
+  async get_utxos(amount: string, tokenId: string): Promise<ErgoBox[] | UtxoBox[]> {
     const wallet = this.wallet || ergo;
 
-    if (this.chainedInputs && wallet instanceof ErgoWallet) {
+    if (this.chainedInputs && (wallet as ErgoWallet)) {
       return await wallet.get_utxos(amount, tokenId, this.chainedInputs as ErgoBox[]);
     } else {
       return (await (this.wallet || ergo).get_utxos(amount, tokenId)) as ErgoBox[];
@@ -187,9 +187,9 @@ export default class Transaction {
       const boxesToSpend = await this.get_utxos(have[keys[i]].toString(), keys[i]);
 
       if (boxesToSpend !== undefined) {
-        boxesToSpend.forEach(bx => {
+        boxesToSpend.forEach((bx: any) => {
           have['ERG'] -= parseInt(bx.value.toString());
-          bx.assets.forEach(asset => {
+          bx.assets.forEach((asset: Token) => {
             if (!Object.keys(have).includes(asset.tokenId)) have[asset.tokenId] = 0;
             have[asset.tokenId] -= parseInt(asset.amount.toString());
           });

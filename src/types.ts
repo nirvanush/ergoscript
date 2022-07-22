@@ -1,3 +1,6 @@
+import { TransactionJson } from './Transaction';
+import { ErgoBox, ErgoTx } from './wallet/types/connector';
+
 export type Asset = {
   tokenId: string;
   amount: number;
@@ -19,6 +22,17 @@ export type UtxoBox = {
   additionalRegisters: any;
   confirmed?: boolean;
 };
+
+export interface ErgoWallet {
+  fromMnemonics: (mnemonics: string) => Promise<ErgoWallet>;
+  setPublicAddress: (publicAddress: string) => Promise<string>;
+  get_change_address: () => Promise<string>;
+  get_used_addresses: () => Promise<string[]>;
+  get_unused_addresses: () => Promise<string[]>;
+  sign_tx: (tx: TransactionJson) => Promise<any>;
+  submit_tx: (tx: ErgoTx) => Promise<string>;
+  get_utxos: (amount: string, tokenId: string, chainedInputs?: ErgoBox[]) => Promise<ErgoBox[]>;
+}
 
 declare global {
   interface Ergo {

@@ -1,6 +1,6 @@
 {
   "name": "ergoscript",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ergo transaction builder optimized for ErgoScript development",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -15,7 +15,7 @@
     "lint": "eslint ./src/ --fix",
     "prepare": "husky install",
     "semantic-release": "semantic-release",
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha  --timeout 30000 -r ts-node/register 'tests/**/*.ts'",
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.ts'",
     "typecheck": "tsc --noEmit"
   },
   "repository": {

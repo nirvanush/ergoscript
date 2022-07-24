@@ -40,8 +40,8 @@ declare global {
     get_change_address: () => Promise<string>;
     get_used_addresses: () => Promise<string[]>;
     get_unused_addresses: () => Promise<string[]>;
-    sign_tx: (tx: string) => Promise<string>;
-    submit_tx: (tx: string) => Promise<string>;
+    sign_tx: (tx: TransactionJson) => Promise<string>;
+    submit_tx: (tx: ErgoTx) => Promise<string>;
   }
 
   interface ergoConnector {

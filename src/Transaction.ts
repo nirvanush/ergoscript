@@ -251,6 +251,7 @@ export default class Transaction {
     this.outputs.push(
       ...[...fundBoxes, ...changeSplit(changeBox), feeBox].filter(box => box.value > 0)
     );
+    debugger;
     this.dataInputs = [];
     this.fee = optimalTxFee;
 

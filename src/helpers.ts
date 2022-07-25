@@ -81,8 +81,10 @@ export function changeSplit(box: Box): Box[] {
 
       remindingValue -= substitutedValue;
     });
-
+    debugger;
     splitted[splitted.length - 1].value += remindingValue;
+  } else {
+    splitted.push(box);
   }
 
   return splitted;

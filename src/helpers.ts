@@ -1,7 +1,9 @@
 import axios from 'axios';
-import { Asset, Balance, ErgoWallet } from './types';
+import { Asset, Balance, ErgoWallet, UtxoBox } from './types';
 import { explorerService } from './wallet/explorer/explorerService';
 import { API_URL } from './wallet/constants/explorer';
+import Box from './Box';
+import { MIN_FEE } from './constants';
 
 export async function currentHeight(): Promise<any> {
   const resp = await explorerService.getBlockHeaders({ limit: 1 });
@@ -51,4 +53,37 @@ export async function isWalletAccessibleForRead(): Promise<null> {
 
 export async function requestWalletReadAcess(): Promise<null> {
   return await ergo_request_read_access();
+}
+
+export function changeSplit(box: Box): Box[] {
+  const splitted: Box[] = [];
+  let remindingValue = box.value;
+
+  if (box.assets.length > 7) {
+    const size = 6;
+    const arrayOfArrays = [];
+
+    for (let offset = 0; offset < box.assets.length; offset += size) {
+      arrayOfArrays.push(box.assets.slice(offset, offset + size));
+    }
+
+    arrayOfArrays.forEach((assetGroup, indx) => {
+      const substitutedValue = indx === arrayOfArrays.length - 1 ? remindingValue : MIN_FEE;
+      splitted.push(
+        new Box({
+          value: substitutedValue,
+          ergoTree: box.boxJson.ergoTree,
+          assets: assetGroup,
+          additionalRegisters: {},
+          creationHeight: box.boxJson.creationHeight,
+        })
+      );
+
+      remindingValue -= substitutedValue;
+    });
+
+    splitted[splitted.length - 1].value += remindingValue;
+  }
+
+  return splitted;
 }

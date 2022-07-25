@@ -1,5 +1,5 @@
 import Box, { Asset, RegisterInput } from './Box';
-import { currentHeight, loadTokensFromWallet } from './helpers';
+import { changeSplit, currentHeight, loadTokensFromWallet } from './helpers';
 import { MIN_FEE, FEE_ADDRESS } from './constants';
 import { wasmModule } from './ergolib';
 import { Address } from '@coinbarn/ergo-ts';
@@ -248,7 +248,9 @@ export default class Transaction {
     });
 
     this.inputs.push(...inputs);
-    this.outputs.push(...[...fundBoxes, changeBox, feeBox].filter(box => box.value > 0));
+    this.outputs.push(
+      ...[...fundBoxes, ...changeSplit(changeBox), feeBox].filter(box => box.value > 0)
+    );
     this.dataInputs = [];
     this.fee = optimalTxFee;
 

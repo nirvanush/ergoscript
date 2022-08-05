@@ -1,4 +1,5 @@
 import { wasmModule } from './ergolib';
+import { Serializer } from '@coinbarn/ergo-ts';
 
 wasmModule.loadAsync();
 
@@ -46,7 +47,7 @@ export async function decodeNum(n: string, isInt = false): Promise<string | numb
 }
 
 export function encodeHex(reg: string): string {
-  return wasmModule.SigmaRust.Constant.from_byte_array(Buffer.from(reg, 'hex')).encode_to_base16();
+  return Serializer.stringToHex(Buffer.from(reg, 'hex') as any);
 }
 
 function toHexString(byteArray: Iterable<unknown> | ArrayLike<unknown>): string {
